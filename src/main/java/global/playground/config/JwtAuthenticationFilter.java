@@ -1,0 +1,90 @@
+package global.playground.config;
+
+import global.playground.service.security.JwtService;
+import global.playground.util.security.CustomUserDetails;
+import global.playground.util.security.CustomUserDetailsService;
+import io.micrometer.common.util.StringUtils;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.Arrays;
+
+import static global.playground.util.constants.AppConstant.API_ENDPOINTS_WHITELIST;
+import static global.playground.util.constants.AppConstant.TOKEN_PREFIX;
+
+@Component
+@RequiredArgsConstructor
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private final JwtService jwtService;
+    private final CustomUserDetailsService customUserDetailsService;
+
+    @Override
+    protected void doFilterInternal(
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain
+    ) throws ServletException, IOException {
+        if (isPublicApi(request)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String jwt = extractJwtToken(request);
+
+        if (jwt == null || jwt.isEmpty()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        authenticateUser(jwt, request);
+        filterChain.doFilter(request, response);
+    }
+
+    private boolean isPublicApi(HttpServletRequest request) {
+        return Arrays.asList(API_ENDPOINTS_WHITELIST).contains(request.getServletPath());
+    }
+
+    private String extractJwtToken(HttpServletRequest request) {
+        String jwt = jwtService.getJwtFromCookies(request);
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+        if (jwt == null && authHeader != null && authHeader.startsWith(TOKEN_PREFIX)) {
+            jwt = authHeader.substring(7);
+        }
+
+        return (jwt == null || jwt.isEmpty()) ? authHeader : jwt;
+    }
+
+    private void authenticateUser(String jwt, HttpServletRequest request) {
+        final String mobileNumber = jwtService.extractUserName(jwt);
+
+        if (StringUtils.isNotEmpty(mobileNumber)
+                && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+            CustomUserDetails userDetails = this.customUserDetailsService.loadUserByUsername(mobileNumber);
+            if (jwtService.isTokenValid(jwt, userDetails)) {
+                SecurityContext context = SecurityContextHolder.createEmptyContext();
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                context.setAuthentication(authToken);
+                SecurityContextHolder.setContext(context);
+            }
+        }
+    }
+}

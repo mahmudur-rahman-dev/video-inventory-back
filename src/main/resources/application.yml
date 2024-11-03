@@ -1,0 +1,32 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: playground
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/video_inventory?allowPublicKeyRetrieval=true
+    username: user
+    password: pass
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+#  autoconfigure:
+#    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+
+application:
+  security:
+    jwt:
+      secret-key: 586B633834416E396M7436753879382F423F4428482B4C6250655367566B5970
+      expiration: 90000000
+      cookie-name: jwt-cookie
+      refresh-token:
+        expiration: 1296000000
+        cookie-name: refresh-jwt-cookie
