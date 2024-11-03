@@ -37,11 +37,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        if (isPublicApi(request)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         String jwt = extractJwtToken(request);
 
         if (jwt == null || jwt.isEmpty()) {
@@ -53,9 +48,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private boolean isPublicApi(HttpServletRequest request) {
-        return Arrays.asList(API_ENDPOINTS_WHITELIST).contains(request.getServletPath());
-    }
 
     private String extractJwtToken(HttpServletRequest request) {
         String jwt = jwtService.getJwtFromCookies(request);
@@ -69,12 +61,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void authenticateUser(String jwt, HttpServletRequest request) {
-        final String mobileNumber = jwtService.extractUserName(jwt);
+        final String username = jwtService.extractUserName(jwt);
 
-        if (StringUtils.isNotEmpty(mobileNumber)
+        if (StringUtils.isNotEmpty(username)
                 && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            CustomUserDetails userDetails = this.customUserDetailsService.loadUserByUsername(mobileNumber);
+            CustomUserDetails userDetails = this.customUserDetailsService.loadUserByUsername(username);
             if (jwtService.isTokenValid(jwt, userDetails)) {
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
