@@ -7,7 +7,7 @@ import global.inventory.payload.request.UserRegistrationRequest;
 import global.inventory.payload.response.AuthenticationResponse;
 import global.inventory.payload.response.RefreshTokenResponse;
 import global.inventory.payload.response.RegistrationResponse;
-import global.inventory.payload.response.generic.PlaygroundResponse;
+import global.inventory.payload.response.generic.InventoryResponse;
 import global.inventory.service.security.AuthenticationService;
 import global.inventory.service.security.JwtService;
 import global.inventory.service.security.RefreshTokenService;
@@ -29,34 +29,34 @@ public class AuthenticationController {
     private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<PlaygroundResponse<AuthenticationResponse>> login(@RequestBody AuthenticationRequest authenticationRequest) {
+    public ResponseEntity<InventoryResponse<AuthenticationResponse>> login(@RequestBody AuthenticationRequest authenticationRequest) {
         var response = authenticationService.authenticate(authenticationRequest);
         var generatedCookies = constructCookies(response);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, generatedCookies.getLeft())
                 .header(HttpHeaders.SET_COOKIE, generatedCookies.getRight())
-                .body(new PlaygroundResponse<>(response));
+                .body(new InventoryResponse<>(response));
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<PlaygroundResponse<RegistrationResponse>> userRegistration(@RequestBody @Validated UserRegistrationRequest userRegistrationRequest) {
+    public ResponseEntity<InventoryResponse<RegistrationResponse>> userRegistration(@RequestBody @Validated UserRegistrationRequest userRegistrationRequest) {
         var register = authenticationService.userRegistration(userRegistrationRequest);
         log.info("user registration response: {}", register);
-        return ResponseEntity.ok(new PlaygroundResponse<>(register));
+        return ResponseEntity.ok(new InventoryResponse<>(register));
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<PlaygroundResponse<RefreshTokenResponse>> refreshToken(@RequestBody RefreshTokenRequest request) {
+    public ResponseEntity<InventoryResponse<RefreshTokenResponse>> refreshToken(@RequestBody RefreshTokenRequest request) {
         var response = refreshTokenService.generateNewToken(request);
-        return ResponseEntity.ok(new PlaygroundResponse<>(response));
+        return ResponseEntity.ok(new InventoryResponse<>(response));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<PlaygroundResponse<String>> logout(
+    public ResponseEntity<InventoryResponse<String>> logout(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String refreshToken
     ) {
-        if (refreshToken != null) {
+            if (refreshToken != null) {
             refreshTokenService.deleteByToken(refreshToken);
 
             var cookies = clearCookies();
@@ -64,7 +64,7 @@ public class AuthenticationController {
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, cookies.getLeft())
                     .header(HttpHeaders.SET_COOKIE, cookies.getRight())
-                    .body(new PlaygroundResponse<>("Logged out successfully"));
+                    .body(new InventoryResponse<>("Logged out successfully"));
         }
         throw new TokenNotFoundException("Logged out  unsuccessful");
     }

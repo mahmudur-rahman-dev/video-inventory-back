@@ -13,7 +13,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class PlaygroundResponse<T> {
+public class InventoryResponse<T> {
     private T data;
     private PageInfo pageInfo;
     private boolean success = true;
@@ -21,18 +21,18 @@ public class PlaygroundResponse<T> {
     private int code = HttpStatus.OK.value();
     private String status = HttpStatus.OK.getReasonPhrase();
 
-    public PlaygroundResponse(T data) {
+    public InventoryResponse(T data) {
         this.data = data;
         validationCheck(data);
     }
 
-    public PlaygroundResponse(T data, String message) {
+    public InventoryResponse(T data, String message) {
         this.data = data;
         this.message = message;
         validationCheck(data);
     }
 
-    public PlaygroundResponse(T data, PageInfo pageInfo) {
+    public InventoryResponse(T data, PageInfo pageInfo) {
         this.data = data;
         this.pageInfo = pageInfo;
 

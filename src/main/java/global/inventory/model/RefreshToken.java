@@ -1,6 +1,5 @@
 package global.inventory.model;
 
-import global.inventory.model.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 

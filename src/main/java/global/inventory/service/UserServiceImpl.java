@@ -2,10 +2,12 @@ package global.inventory.service;
 
 import global.inventory.repository.UserRepository;
 import global.inventory.enums.Role;
-import global.inventory.model.user.User;
+import global.inventory.model.User;
 import global.inventory.payload.request.UserRegistrationRequest;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -54,5 +56,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
+    }
+
+    @Override
+    public Page<User> getAllNonAdminUsers(Pageable pageable) {
+        return userRepository.findAllByRole(Role.USER, pageable);
     }
 }

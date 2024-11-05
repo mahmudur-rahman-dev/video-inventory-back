@@ -44,3 +44,4 @@ logs/
 deploy.sh
 .DS_Store
 /rough.txt
+uploads/

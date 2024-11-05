@@ -2,7 +2,7 @@ package global.inventory.config;
 
 
 import global.inventory.repository.UserRepository;
-import global.inventory.model.user.User;
+import global.inventory.model.User;
 import global.inventory.util.security.CustomUserDetails;
 import global.inventory.util.security.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +37,7 @@ public class ApplicationSecurityConfig {
                     .username(user.getName())
                     .password(user.getPassword())
                     .authorities(authorities)
+                    .role(user.getRole())
                     .build();
         };
     }

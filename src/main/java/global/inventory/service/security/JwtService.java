@@ -1,6 +1,6 @@
 package global.inventory.service.security;
 
-import global.inventory.model.user.User;
+import global.inventory.model.User;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseCookie;

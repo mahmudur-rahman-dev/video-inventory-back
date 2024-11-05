@@ -1,5 +1,6 @@
 package global.inventory.util.security;
 
+import global.inventory.enums.Role;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,13 +14,15 @@ public class CustomUserDetails implements UserDetails {
     private String username;
     private String password;
     private Long userId;
+    private Role role;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public CustomUserDetails(String username, String password, Long userId, Collection<? extends GrantedAuthority> authorities) {
+    public CustomUserDetails(String username, String password, Long userId, Role role, Collection<? extends GrantedAuthority> authorities) {
         this.username = username;
         this.password = password;
         this.userId = userId;
         this.authorities = authorities;
+        this.role = role;
     }
 
     @Override

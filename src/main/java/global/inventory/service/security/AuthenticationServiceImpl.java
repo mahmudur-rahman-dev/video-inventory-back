@@ -1,6 +1,6 @@
 package global.inventory.service.security;
 
-import global.inventory.model.user.User;
+import global.inventory.model.User;
 import global.inventory.payload.request.AuthenticationRequest;
 import global.inventory.payload.request.UserRegistrationRequest;
 import global.inventory.payload.response.AuthenticationResponse;
