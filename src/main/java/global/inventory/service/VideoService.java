@@ -2,6 +2,7 @@ package global.inventory.service;
 
 import global.inventory.model.Video;
 import global.inventory.model.VideoAssignment;
+import global.inventory.payload.request.VideoUpdateRequest;
 import global.inventory.payload.request.VideoUploadRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,4 +25,6 @@ public interface VideoService {
     String getVideoPublicUrl(Video video);
 
     Video getVideoWithFullUrl(Long id);
+
+    Video updateVideo(Long id, VideoUpdateRequest request);
 }

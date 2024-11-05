@@ -11,8 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "video_assignments", indexes = {
-        @Index(name = "idx_user_video", columnList = "user_id,video_id"),
-        @Index(name = "idx_assignment_status", columnList = "status")
+        @Index(name = "idx_user_video", columnList = "user_id,video_id")
 })
 @Builder
 @AllArgsConstructor
@@ -32,18 +31,8 @@ public class VideoAssignment extends BaseEntity {
     @JoinColumn(name = "video_id", nullable = false)
     private Video video;
 
-    @NotNull
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private AssignmentStatus status;
-
     @Column(name = "assigned_at", nullable = false)
     private LocalDateTime assignedAt;
-
-    @Column(name = "completed_at")
-    private LocalDateTime completedAt;
-
-    @Column(columnDefinition = "TEXT")
-    private String notes;
 }
+
 

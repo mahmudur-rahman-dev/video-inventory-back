@@ -7,14 +7,12 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
 @Entity
 @Table(name = "activity_logs", indexes = {
         @Index(name = "idx_user_video", columnList = "user_id,video_id"),
-        @Index(name = "idx_action_timestamp", columnList = "action,timestamp"),
-        @Index(name = "idx_user_timestamp", columnList = "user_id,timestamp")
+        @Index(name = "idx_action_timestamp", columnList = "action,timestamp")
 })
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -34,7 +32,7 @@ public class ActivityLog extends BaseEntity {
     private Video video;
 
     @NotNull
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ActivityAction action;
 

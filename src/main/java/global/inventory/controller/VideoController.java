@@ -2,6 +2,8 @@ package global.inventory.controller;
 
 import global.inventory.mapper.VideoAssignmentMapper;
 import global.inventory.mapper.VideoMapper;
+import global.inventory.model.Video;
+import global.inventory.payload.request.VideoUpdateRequest;
 import global.inventory.payload.request.VideoUploadRequest;
 import global.inventory.payload.response.VideoAssignmentResponse;
 import global.inventory.payload.response.VideoResponse;
@@ -96,5 +98,15 @@ public class VideoController {
     ) {
         videoService.deleteVideo(id);
         return ResponseEntity.ok(new InventoryResponse<>(true));
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<InventoryResponse<VideoResponse>> updateVideo(
+            @PathVariable Long id,
+            @RequestBody VideoUpdateRequest request
+    ) {
+        Video updated = videoService.updateVideo(id, request);
+        return ResponseEntity.ok(new InventoryResponse<>(VideoMapper.INSTANCE.videoToDto(updated)));
     }
 }

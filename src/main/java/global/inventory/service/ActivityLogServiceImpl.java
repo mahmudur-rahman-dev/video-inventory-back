@@ -9,6 +9,8 @@ import global.inventory.repository.ActivityLogRepository;
 import global.inventory.repository.UserRepository;
 import global.inventory.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,17 +35,12 @@ public class ActivityLogServiceImpl implements ActivityLogService {
         Video video = videoRepository.findById(videoId)
                 .orElseThrow(() -> new RuntimeException("Video not found"));
 
-
-//        if (video.getAssignedToUser() == null || !video.getAssignedToUser().getId().equals(userId)) {
-//            throw new AccessDeniedException("User does not have access to this video");
-//        }
-
         ActivityLog log = ActivityLog.builder()
                 .user(user)
                 .video(video)
                 .action(action)
                 .timestamp(LocalDateTime.now())
-                .details("User watched video: " + video.getTitle())
+                .details(generateActivityDetails(action, video.getTitle()))
                 .build();
 
         return activityLogRepository.save(log);
@@ -51,19 +48,47 @@ public class ActivityLogServiceImpl implements ActivityLogService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<ActivityLog> getAllActivityLogs() {
+        return activityLogRepository.findAllByOrderByTimestampDesc();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<ActivityLog> getVideoActivityLogs(Long videoId) {
-        return activityLogRepository.findByVideo_Id(videoId);
+        return activityLogRepository.findByVideo_IdOrderByTimestampDesc(videoId);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ActivityLog> getUserActivityLogs(Long userId) {
-        return activityLogRepository.findByUser_Id(userId);
+        return activityLogRepository.findByUser_IdOrderByTimestampDesc(userId);
     }
 
     @Override
-    public List<ActivityLog> getAllActivityLogs() {
-        return new ArrayList<>();
+    @Transactional(readOnly = true)
+    public Page<ActivityLog> getAllActivityLogs(Pageable pageable) {
+        return activityLogRepository.findAllByOrderByTimestampDesc(pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ActivityLog> getVideoActivityLogs(Long videoId, Pageable pageable) {
+        return activityLogRepository.findByVideo_IdOrderByTimestampDesc(videoId, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ActivityLog> getUserActivityLogs(Long userId, Pageable pageable) {
+        return activityLogRepository.findByUser_IdOrderByTimestampDesc(userId, pageable);
+    }
+
+    private String generateActivityDetails(ActivityAction action, String videoTitle) {
+        return switch (action) {
+            case VIEWED -> String.format("User viewed video: %s", videoTitle);
+            case UPDATED -> String.format("Admin updated video: %s", videoTitle);
+            case ASSIGNED -> String.format("Video assigned: %s", videoTitle);
+            case DELETED -> String.format("Video deleted: %s", videoTitle);
+        };
     }
 }
 
