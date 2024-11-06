@@ -27,4 +27,6 @@ public interface VideoService {
     Video getVideoWithFullUrl(Long id);
 
     Video updateVideo(Long id, VideoUpdateRequest request);
+
+    boolean removeAssignment(Long videoId);
 }

@@ -33,7 +33,7 @@ public class VideoController {
 
 
     @Operation(summary = "Upload a new video")
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<InventoryResponse<VideoResponse>> uploadVideo(
             @RequestParam("file") MultipartFile file,
@@ -108,5 +108,14 @@ public class VideoController {
     ) {
         Video updated = videoService.updateVideo(id, request);
         return ResponseEntity.ok(new InventoryResponse<>(VideoMapper.INSTANCE.videoToDto(updated)));
+    }
+
+    @DeleteMapping("/remove-assignment/{assignmentId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<InventoryResponse<Boolean>> removeAssignment(
+            @PathVariable Long assignmentId
+    ) {
+        videoService.removeAssignment(assignmentId);
+        return ResponseEntity.ok(new InventoryResponse<>(true));
     }
 }

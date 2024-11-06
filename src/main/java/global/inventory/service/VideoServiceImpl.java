@@ -1,7 +1,6 @@
 package global.inventory.service;
 
 import global.inventory.enums.ActivityAction;
-import global.inventory.enums.AssignmentStatus;
 import global.inventory.model.User;
 import global.inventory.model.Video;
 import global.inventory.model.VideoAssignment;
@@ -19,9 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -133,7 +130,7 @@ public class VideoServiceImpl implements VideoService {
         }
 
         Video video = getVideoById(id);
-        video.setVideoUrl(getVideoPublicUrl(video));
+//        video.setVideoUrl(getVideoPublicUrl(video));
 
         if (!UtilService.isAdminUser()) {
             activityLogService.logActivity(
@@ -160,6 +157,13 @@ public class VideoServiceImpl implements VideoService {
         }
 
         return videoRepository.save(video);
+    }
+
+    @Override
+    public boolean removeAssignment(Long videoId) {
+        VideoAssignment assignment = videoAssignmentService.getById(videoId);
+        videoAssignmentService.delete(assignment.getId());
+        return true;
     }
 
     private Video getVideoById(Long id) {

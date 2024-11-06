@@ -47,6 +47,7 @@ public class SecurityConfiguration {
                                         "/api/v1/auth/login",
                                         "/api/v1/auth/registration",
                                         "/api/v1/auth/refresh-token",
+                                        "/uploads/**",
                                         "/v2/api-docs",
                                         "/v3/api-docs/**",
                                         "/swagger-resources",

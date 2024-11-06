@@ -114,7 +114,7 @@ public class VideoStorageServiceImpl implements VideoStorageService {
     @Override
     public String generatePublicUrl(String storedPath) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/videos/")
+                .path("/uploads/")
                 .path(storedPath)
                 .toUriString();
     }

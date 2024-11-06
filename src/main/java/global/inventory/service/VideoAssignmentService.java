@@ -1,9 +1,10 @@
 package global.inventory.service;
 
-import global.inventory.model.Video;
 import global.inventory.model.VideoAssignment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.Optional;
 
 public interface VideoAssignmentService {
     void assignVideoToUser(Long videoId, Long userId, Long adminId);
@@ -15,4 +16,10 @@ public interface VideoAssignmentService {
     VideoAssignment save(VideoAssignment videoAssignment);
 
     Boolean existsByVideoIdAndUserId(Long id, Long requesterUserIdFromSecurityContext);
+
+    Optional<VideoAssignment> findByVideoIdAndUserId(Long videoId, Long userId);
+
+    void delete(Long id);
+
+    VideoAssignment getById(Long videoId);
 }

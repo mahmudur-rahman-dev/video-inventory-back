@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -41,5 +43,22 @@ public class VideoAssignmentServiceImpl implements VideoAssignmentService {
     @Override
     public Boolean existsByVideoIdAndUserId(Long id, Long requesterUserIdFromSecurityContext) {
         return videoAssignmentRepository.existsByVideoIdAndUserId(id, requesterUserIdFromSecurityContext);
+    }
+
+    @Override
+    public Optional<VideoAssignment> findByVideoIdAndUserId(Long videoId, Long userId) {
+        return videoAssignmentRepository.findByVideoIdAndUserId(videoId, userId);
+    }
+
+    @Override
+    public void delete(Long id) {
+        videoAssignmentRepository.deleteById(id);
+    }
+
+    @Override
+    public VideoAssignment getById(Long videoId) {
+        return videoAssignmentRepository.findById(videoId).orElseThrow(
+                () -> new RuntimeException("Video assignment not found")
+        );
     }
 }
