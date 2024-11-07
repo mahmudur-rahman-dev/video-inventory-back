@@ -8,7 +8,9 @@ import java.util.Optional;
 
 public interface VideoAssignmentService {
     void assignVideoToUser(Long videoId, Long userId, Long adminId);
+
     Page<VideoAssignment> getAssignedVideosForUser(Long userId, Pageable pageable);
+
     void deleteAssignment(Long assignmentId, Long adminId);
 
     Page<VideoAssignment> getAllAssignments(Pageable pageable);
@@ -21,5 +23,5 @@ public interface VideoAssignmentService {
 
     void delete(Long id);
 
-    VideoAssignment getById(Long videoId);
+    VideoAssignment findById(Long videoId);
 }

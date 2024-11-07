@@ -3,7 +3,6 @@ package global.inventory.payload.response;
 import global.inventory.payload.request.UserDetailsResponse;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data

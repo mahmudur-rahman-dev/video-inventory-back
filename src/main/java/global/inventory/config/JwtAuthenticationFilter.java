@@ -19,9 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 
-import static global.inventory.util.constants.AppConstant.API_ENDPOINTS_WHITELIST;
 import static global.inventory.util.constants.AppConstant.TOKEN_PREFIX;
 
 @Component

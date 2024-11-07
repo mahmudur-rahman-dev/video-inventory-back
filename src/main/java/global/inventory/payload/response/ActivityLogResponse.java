@@ -1,7 +1,6 @@
 package global.inventory.payload.response;
 
 import global.inventory.enums.ActivityAction;
-import global.inventory.model.ActivityLog;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,5 +18,4 @@ public class ActivityLogResponse {
     private VideoResponse video;
     private ActivityAction action;
     private LocalDateTime timestamp;
-    private String details;
 }

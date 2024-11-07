@@ -1,22 +1,17 @@
 package global.inventory.service;
 
 import global.inventory.enums.ActivityAction;
-import global.inventory.exception.ResourceNotFoundException;
 import global.inventory.model.ActivityLog;
 import global.inventory.model.User;
 import global.inventory.model.Video;
 import global.inventory.repository.ActivityLogRepository;
-import global.inventory.repository.UserRepository;
-import global.inventory.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,16 +19,14 @@ import java.util.List;
 @Transactional
 public class ActivityLogServiceImpl implements ActivityLogService {
     private final ActivityLogRepository activityLogRepository;
-    private final UserRepository userRepository;
-    private final VideoRepository videoRepository;
+    private final UserService userService;
+    private final VideoService videoService;
 
     @Override
     public ActivityLog logActivity(Long userId, Long videoId, ActivityAction action) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userService.findById(userId);
 
-        Video video = videoRepository.findById(videoId)
-                .orElseThrow(() -> new RuntimeException("Video not found"));
+        Video video = videoService.findById(videoId);
 
         ActivityLog log = ActivityLog.builder()
                 .user(user)
@@ -82,12 +75,11 @@ public class ActivityLogServiceImpl implements ActivityLogService {
         return activityLogRepository.findByUser_IdOrderByTimestampDesc(userId, pageable);
     }
 
+
     private String generateActivityDetails(ActivityAction action, String videoTitle) {
         return switch (action) {
             case VIEWED -> String.format("User viewed video: %s", videoTitle);
-            case UPDATED -> String.format("Admin updated video: %s", videoTitle);
-            case ASSIGNED -> String.format("Video assigned: %s", videoTitle);
-            case DELETED -> String.format("Video deleted: %s", videoTitle);
+            case COMPLETED -> String.format("User completed video: %s", videoTitle);
         };
     }
 }

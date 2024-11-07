@@ -1,8 +1,15 @@
 package global.inventory.enums;
 
 public enum ActivityAction {
-    VIEWED,    // When user views/watches video
-    UPDATED,   // When admin updates video details
-    ASSIGNED,  // When admin assigns video (for tracking assignments)
-    DELETED    // When admin deletes video (for tracking deletions)
+    VIEWED,
+    COMPLETED;
+
+    public static ActivityAction fromString(String action) {
+        for (ActivityAction activityAction : ActivityAction.values()) {
+            if (activityAction.name().equalsIgnoreCase(action)) {
+                return activityAction;
+            }
+        }
+        throw new IllegalArgumentException("No enum constant " + ActivityAction.class.getCanonicalName() + "." + action);
+    }
 }

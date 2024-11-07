@@ -1,8 +1,8 @@
 package global.inventory.config;
 
 
-import global.inventory.repository.UserRepository;
 import global.inventory.model.User;
+import global.inventory.repository.UserRepository;
 import global.inventory.util.security.CustomUserDetails;
 import global.inventory.util.security.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;

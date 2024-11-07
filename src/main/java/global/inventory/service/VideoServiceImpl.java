@@ -1,13 +1,10 @@
 package global.inventory.service;
 
-import global.inventory.enums.ActivityAction;
 import global.inventory.model.User;
 import global.inventory.model.Video;
 import global.inventory.model.VideoAssignment;
 import global.inventory.payload.request.VideoUpdateRequest;
 import global.inventory.payload.request.VideoUploadRequest;
-import global.inventory.repository.ActivityLogRepository;
-import global.inventory.repository.UserRepository;
 import global.inventory.repository.VideoRepository;
 import global.inventory.service.storage.VideoStorageService;
 import global.inventory.util.UtilService;
@@ -18,18 +15,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class VideoServiceImpl implements VideoService {
     private final VideoRepository videoRepository;
-    private final UserRepository userRepository;
-    private final ActivityLogRepository activityLogRepository;
+    private final UserService userService;
     private final VideoStorageService videoStorageService;
     private final VideoAssignmentService videoAssignmentService;
-    private final ActivityLogService activityLogService;
 
     @Override
     @Transactional
@@ -47,53 +41,30 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public VideoAssignment assignVideoToUser(Long videoId, Long userId) {
-        // Verify video exists and not deleted
         Video video = videoRepository.findById(videoId)
                 .filter(v -> !v.isDeleted())
                 .orElseThrow(() -> new RuntimeException("Video not found or deleted"));
 
-        // Verify user exists
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userService.findById(userId);
 
-        // Check if assignment already exists
         if (videoAssignmentService.existsByVideoIdAndUserId(videoId, userId)) {
             throw new RuntimeException("Video already assigned to user");
         }
 
-        // Create new assignment
         VideoAssignment assignment = VideoAssignment.builder()
                 .user(user)
                 .video(video)
                 .assignedAt(LocalDateTime.now())
                 .build();
 
-        // Save assignment
-        VideoAssignment savedAssignment = videoAssignmentService.save(assignment);
 
-        // Log activity
-        activityLogService.logActivity(
-                UtilService.getRequesterUserIdFromSecurityContext(),
-                videoId,
-                ActivityAction.ASSIGNED
-        );
-
-        return savedAssignment;
+        return videoAssignmentService.save(assignment);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Video> getUserVideos(Long userId) {
-        // Verify user exists
-        if (!userRepository.existsById(userId)) {
-            throw new RuntimeException("User not found");
-        }
-
-        return videoRepository.findByVideoAssignments_User_Id(userId)
-                .stream()
-                .filter(video -> !video.isDeleted())
-                .peek(video -> video.setVideoUrl(getVideoPublicUrl(video)))
-                .toList();
+    public Page<Video> getUserVideos(Long userId, Pageable pageable) {
+        return videoRepository.findByVideoAssignments_User_Id(userId, pageable);
     }
 
     @Override
@@ -107,12 +78,6 @@ public class VideoServiceImpl implements VideoService {
         Video video = getVideoById(id);
         video.setDeleted(true);
         videoRepository.save(video);
-
-        activityLogService.logActivity(
-                UtilService.getRequesterUserIdFromSecurityContext(),
-                id,
-                ActivityAction.DELETED
-        );
     }
 
     @Override
@@ -121,26 +86,15 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public Video getVideoWithFullUrl(Long id) {
-        if(!UtilService.isAdminUser()) {
-            if(!videoAssignmentService.existsByVideoIdAndUserId(id,
+    public Video findById(Long id) {
+        if (!UtilService.isAdminUser()) {
+            if (!videoAssignmentService.existsByVideoIdAndUserId(id,
                     UtilService.getRequesterUserIdFromSecurityContext())) {
                 throw new RuntimeException("Video not found or access denied");
             }
         }
 
-        Video video = getVideoById(id);
-//        video.setVideoUrl(getVideoPublicUrl(video));
-
-        if (!UtilService.isAdminUser()) {
-            activityLogService.logActivity(
-                    UtilService.getRequesterUserIdFromSecurityContext(),
-                    id,
-                    ActivityAction.VIEWED
-            );
-        }
-
-        return video;
+        return getVideoById(id);
     }
 
     @Override
@@ -161,7 +115,7 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public boolean removeAssignment(Long videoId) {
-        VideoAssignment assignment = videoAssignmentService.getById(videoId);
+        VideoAssignment assignment = videoAssignmentService.findById(videoId);
         videoAssignmentService.delete(assignment.getId());
         return true;
     }

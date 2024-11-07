@@ -1,7 +1,5 @@
 package global.inventory.payload.response;
 
-import global.inventory.model.Video;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 

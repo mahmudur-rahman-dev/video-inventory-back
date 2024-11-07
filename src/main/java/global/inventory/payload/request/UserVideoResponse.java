@@ -1,6 +1,5 @@
 package global.inventory.payload.request;
 
-import global.inventory.enums.AssignmentStatus;
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,7 +12,6 @@ public class UserVideoResponse {
     private String title;
     private String description;
     private String videoUrl;
-    private AssignmentStatus status;
     private LocalDateTime assignedAt;
     private LocalDateTime lastViewed;
 }

@@ -13,7 +13,7 @@ public class JacksonConfig {
     public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
         return builder -> {
             builder.simpleDateFormat("dd.MM.yyyy HH:mm:ss");
-            builder.timeZone(TimeZone.getTimeZone("Europe/Berlin"));
+            builder.timeZone(TimeZone.getTimeZone("Asia/Dhaka"));
         };
     }
 }

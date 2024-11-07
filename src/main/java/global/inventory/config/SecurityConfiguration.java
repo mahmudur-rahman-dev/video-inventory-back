@@ -1,6 +1,5 @@
 package global.inventory.config;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -37,7 +36,8 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
+        http
+                .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(unauthorizedEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler))
@@ -74,7 +74,6 @@ public class SecurityConfiguration {
         CorsConfiguration config = getCorsConfiguration();
         source.registerCorsConfiguration("/**", config);
         FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
-
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return bean;
     }
@@ -86,7 +85,17 @@ public class SecurityConfiguration {
         config.setAllowedHeaders(Arrays.asList(
                 HttpHeaders.AUTHORIZATION,
                 HttpHeaders.CONTENT_TYPE,
-                HttpHeaders.ACCEPT));
+                HttpHeaders.ACCEPT,
+                HttpHeaders.RANGE,
+                HttpHeaders.CONTENT_RANGE,
+                "Accept-Ranges"
+        ));
+        config.setExposedHeaders(Arrays.asList(
+                HttpHeaders.CONTENT_RANGE,
+                HttpHeaders.ACCEPT_RANGES,
+                HttpHeaders.CONTENT_LENGTH,
+                HttpHeaders.CONTENT_TYPE
+        ));
         config.setAllowedMethods(Arrays.asList(
                 HttpMethod.GET.name(),
                 HttpMethod.POST.name(),

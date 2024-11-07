@@ -1,14 +1,12 @@
 package global.inventory.model;
 
-import global.inventory.enums.AssignmentStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
+
 @Entity
 @Table(name = "video_assignments", indexes = {
         @Index(name = "idx_user_video", columnList = "user_id,video_id")
@@ -16,6 +14,8 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class VideoAssignment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -15,4 +15,6 @@ public interface UserService {
     Boolean existsByUsername(String username);
 
     Page<User> getAllNonAdminUsers(Pageable pageable);
+
+    User findById(Long userId);
 }

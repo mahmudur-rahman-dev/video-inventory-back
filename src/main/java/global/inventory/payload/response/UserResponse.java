@@ -1,7 +1,6 @@
 package global.inventory.payload.response;
 
 import global.inventory.enums.Role;
-import global.inventory.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,9 +1,9 @@
 package global.inventory.service;
 
-import global.inventory.repository.UserRepository;
 import global.inventory.enums.Role;
 import global.inventory.model.User;
 import global.inventory.payload.request.UserRegistrationRequest;
+import global.inventory.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -61,5 +61,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<User> getAllNonAdminUsers(Pageable pageable) {
         return userRepository.findAllByRole(Role.USER, pageable);
+    }
+
+    @Override
+    public User findById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 }

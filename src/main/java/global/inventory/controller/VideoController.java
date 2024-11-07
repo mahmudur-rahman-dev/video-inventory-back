@@ -2,7 +2,6 @@ package global.inventory.controller;
 
 import global.inventory.mapper.VideoAssignmentMapper;
 import global.inventory.mapper.VideoMapper;
-import global.inventory.model.Video;
 import global.inventory.payload.request.VideoUpdateRequest;
 import global.inventory.payload.request.VideoUploadRequest;
 import global.inventory.payload.response.VideoAssignmentResponse;
@@ -86,7 +85,7 @@ public class VideoController {
     public ResponseEntity<InventoryResponse<VideoResponse>> getVideo(
             @PathVariable Long id
     ) {
-        var video = videoService.getVideoWithFullUrl(id);
+        var video = videoService.findById(id);
         return ResponseEntity.ok(new InventoryResponse<>(VideoMapper.INSTANCE.videoToDto(video)));
     }
 
@@ -106,8 +105,18 @@ public class VideoController {
             @PathVariable Long id,
             @RequestBody VideoUpdateRequest request
     ) {
-        Video updated = videoService.updateVideo(id, request);
+        var updated = videoService.updateVideo(id, request);
         return ResponseEntity.ok(new InventoryResponse<>(VideoMapper.INSTANCE.videoToDto(updated)));
+    }
+
+    @GetMapping("/user-videos")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<InventoryResponse<List<VideoResponse>>> getUserVideos(@PageableDefault Pageable pageable) {
+        var videos = videoService.getUserVideos(UtilService.getRequesterUserIdFromSecurityContext(), pageable);
+        return ResponseEntity.ok(new InventoryResponse<>(
+                VideoMapper.INSTANCE.videoListToDtoList(videos.getContent()),
+                PageInfo.of(videos)
+        ));
     }
 
     @DeleteMapping("/remove-assignment/{assignmentId}")

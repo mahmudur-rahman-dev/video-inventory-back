@@ -56,7 +56,7 @@ public class VideoAssignmentServiceImpl implements VideoAssignmentService {
     }
 
     @Override
-    public VideoAssignment getById(Long videoId) {
+    public VideoAssignment findById(Long videoId) {
         return videoAssignmentRepository.findById(videoId).orElseThrow(
                 () -> new RuntimeException("Video assignment not found")
         );

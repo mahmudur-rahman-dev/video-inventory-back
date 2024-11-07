@@ -7,14 +7,12 @@ import global.inventory.payload.request.VideoUploadRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 public interface VideoService {
     Video uploadVideo(VideoUploadRequest request);
 
     VideoAssignment assignVideoToUser(Long videoId, Long userId);
 
-    List<Video> getUserVideos(Long userId);
+    Page<Video> getUserVideos(Long userId, Pageable pageable);
 
     Page<Video> getAllVideosForAdmin(Pageable pageable);
 
@@ -24,7 +22,7 @@ public interface VideoService {
 
     String getVideoPublicUrl(Video video);
 
-    Video getVideoWithFullUrl(Long id);
+    Video findById(Long id);
 
     Video updateVideo(Long id, VideoUpdateRequest request);
 

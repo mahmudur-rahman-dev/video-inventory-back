@@ -1,7 +1,6 @@
 package global.inventory.mapper;
 
 import global.inventory.model.Video;
-import global.inventory.model.VideoAssignment;
 import global.inventory.payload.response.VideoResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;

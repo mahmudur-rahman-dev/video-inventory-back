@@ -12,9 +12,6 @@ import java.util.List;
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-//    @Mapping(target = "securityAnswer", ignore = true)
-//    void updateEntityFromDto(UserInfoUpdateRequest userInfoUpdateRequest, @MappingTarget User user);
-
     List<UserDetailsResponse> userListToDtoList(List<User> users);
 
     UserDetailsResponse userToDto(User user);
